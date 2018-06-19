@@ -1,0 +1,16 @@
+<div class = "container">
+  
+	<div *ngFor = "let phone of phones">
+		
+		  <div class="col-md-2" style="background-color: #cce0ff;height: 400px;">
+			<li>{{phone.model}}</li>
+			<li>{{phone.phonepicture}}</li>
+			<li>{{phone.price}}</li>
+		    <br>
+			<input type="button" (click) = "viewPhone(phone._id)" value= "View" class ="btn btn-success">
+			<br><br>
+		  </div>
+		  
+	</div>
+  	
+</div>

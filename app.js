@@ -1,51 +1,39 @@
-//import modules
-var express = require('express');
-var mongoose = require('mongoose');
-var bodyparser = require('body-parser');
-var cors = require('cors');
-var path = require('path');
-
-var app = express();
-
-const route = require('./routes/route');
+const express = require('express');
+const path = require('path');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 
-//connect to mongodb
-mongoose.connect('mongodb://localhost:27017/compareME');
+const app = express();
+const port = process.env.PORT || 3000;
 
-//on connection
-mongoose.connection.on('connected',()=>{
-	console.log('Connected to database mongodb @ 27017');
-});
-
-mongoose.connection.on('error',(err)=>{
-	if(err)
-	{
-		console.log('Error in Database connection:'+err);
-	}
-});
-
-
-//port number
-const port = 3000;
-
-//adding middleware - core
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.json());
+ 
+const config = require('./config/database');
+const user = require('./routes/users');
+const phone = require('./routes/phones');
 
-//body-parser
-app.use(bodyparser.json());
 
-//static files
-app.use(express.static(path.join(__dirname, 'public')));
+const connection = mongoose.connect(config.database);
+if (connection){
+	console.log("database connected");
+}else{
+	console.log("database not connected");
+}
 
-app.use('/api', route);
 
-//testing server
+app.use(express.static(path.join(__dirname,"public")));
 
-app.get('/',(req, res)=>{
-	res.send('hello');
+app.use('/user',user);
+app.use('/phone',phone);
+
+app.get("/",function(req, res) {
+	res.send("hello");
 });
 
-app.listen(port,()=>{
-	console.log('Server started at port:'+port);
+app.listen(port,function () {
+	console.log("listening to port "+ port);
 });
